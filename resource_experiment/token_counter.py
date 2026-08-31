@@ -6,6 +6,8 @@ from typing import Any
 
 
 CATEGORIES = ("system", "tool_definitions", "user", "assistant", "tool_results")
+TOKENIZER_REPOSITORY = "moonshotai/Kimi-K3"
+TOKENIZER_REVISION = "a590ce090cb049c93a33dfe8c208ec652aa20503"
 
 
 class KimiTokenCounter:
@@ -14,7 +16,8 @@ class KimiTokenCounter:
 
         cache_dir.mkdir(parents=True, exist_ok=True)
         self.tokenizer = AutoTokenizer.from_pretrained(
-            "moonshotai/Kimi-K3",
+            TOKENIZER_REPOSITORY,
+            revision=TOKENIZER_REVISION,
             trust_remote_code=True,
             cache_dir=str(cache_dir),
         )
@@ -52,4 +55,3 @@ class KimiTokenCounter:
             counts["system"] = full
         counts["local_total"] = full
         return counts
-

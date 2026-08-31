@@ -117,14 +117,20 @@ class InstrumentedContextAgent(ContextAwareAgent):
 
     def _on_http_request(self, request: httpx.Request) -> None:
         call_id = self.current_call_id or "unscoped"
+        previous = self.transport_attempts.setdefault(call_id, [])[-1:] 
+        now_ns = time.monotonic_ns()
+        wait_seconds = None
+        if previous and previous[0].get("headers_ns") is not None:
+            wait_seconds = (now_ns - int(previous[0]["headers_ns"])) / 1e9
         attempt = {
-            "attempt": len(self.transport_attempts.setdefault(call_id, [])),
-            "start_ns": time.monotonic_ns(),
+            "attempt": len(self.transport_attempts[call_id]),
+            "start_ns": now_ns,
             "method": request.method,
             "url": str(request.url),
             "request_body_bytes": len(request.content) if request.content else 0,
             "status_code": None,
             "headers_ns": None,
+            "wait_seconds_since_previous_headers": wait_seconds,
         }
         self.transport_attempts[call_id].append(attempt)
         self.event_log.emit(
@@ -134,6 +140,7 @@ class InstrumentedContextAgent(ContextAwareAgent):
             iteration=self.current_iteration,
             attempt=attempt["attempt"],
             request_body_bytes=attempt["request_body_bytes"],
+            wait_seconds_since_previous_headers=wait_seconds,
         )
 
     def _on_http_response(self, response: httpx.Response) -> None:
@@ -463,4 +470,3 @@ class InstrumentedContextAgent(ContextAwareAgent):
             "error": error,
             **self._backend_identity(),
         }
-

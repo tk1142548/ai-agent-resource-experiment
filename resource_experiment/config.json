@@ -3,6 +3,8 @@
   "experiment_id": "kimi-k3-context-resource-ablation",
   "provider": "kimi",
   "model": "kimi-k3",
+  "tokenizer_repository": "moonshotai/Kimi-K3",
+  "tokenizer_revision": "a590ce090cb049c93a33dfe8c208ec652aa20503",
   "task_variant": "guarded",
   "hidden_result_style": "empty",
   "max_iterations": 5,
@@ -21,4 +23,3 @@
   "upstream_repository": "https://github.com/bojieli/ai-agent-book",
   "upstream_revision": "030397201cc82d2c5b4d375a9b1ea52b15e28db9"
 }
-
