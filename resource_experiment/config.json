@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "kimi-k3-context-resource-ablation",
+  "provider": "kimi",
+  "model": "kimi-k3",
+  "task_variant": "guarded",
+  "hidden_result_style": "empty",
+  "max_iterations": 5,
+  "repetitions": 30,
+  "order_seed": 20260831,
+  "bootstrap_seed": 20260831,
+  "bootstrap_resamples": 10000,
+  "resource_sample_interval_seconds": 0.02,
+  "price_cny_per_million_tokens": {
+    "cached_input": 2.0,
+    "uncached_input": 20.0,
+    "output": 100.0
+  },
+  "pricing_source": "https://platform.kimi.com/docs/pricing/chat-k3",
+  "pricing_observed_at": "2026-08-31",
+  "upstream_repository": "https://github.com/bojieli/ai-agent-book",
+  "upstream_revision": "030397201cc82d2c5b4d375a9b1ea52b15e28db9"
+}
+

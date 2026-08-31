@@ -1,0 +1,32 @@
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Temporary experiment state
+resource_experiment/tmp/
+resource_experiment/.cache/
+resource_experiment/results/*/checkpoints/
+
+# Upstream checkout files outside this focused experiment repository
+/*
+!/.gitignore
+!/LICENSE
+!/README.md
+!/agentbook/
+!/chapter1/
+!/resource_experiment/
+
+/chapter1/*
+!/chapter1/context/
+/chapter1/context/*
+!/chapter1/context/agent.py
+!/chapter1/context/config.py
+!/chapter1/context/grounding.py
+!/chapter1/context/requirements.txt
+!/chapter1/context/run_experiment_1_1.py
