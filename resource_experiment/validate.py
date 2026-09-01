@@ -130,6 +130,25 @@ def validate(results_dir: Path, phase: str, repetitions: int, check_git: bool) -
             + metrics["framework_wall_seconds"]
         )
         assert_close(float(metrics["task_wall_seconds"]), float(time_parts), tolerance=1e-6)
+    derived_files = 0
+    if phase == "main":
+        import pandas as pd
+
+        for stem in ("run_metrics", "config_summary", "paired_differences"):
+            csv_frame = pd.read_csv(results_dir / "derived" / f"{stem}.csv")
+            parquet_frame = pd.read_parquet(results_dir / "derived" / f"{stem}.parquet")
+            if list(csv_frame.columns) != list(parquet_frame.columns) or len(csv_frame) != len(parquet_frame):
+                raise AssertionError(f"{stem} 的 CSV 与 Parquet 结构不一致。")
+            derived_files += 2
+        if len(pd.read_csv(results_dir / "derived" / "run_metrics.csv")) != expected:
+            raise AssertionError("任务级派生表行数不是 150。")
+        if len(pd.read_csv(results_dir / "derived" / "config_summary.csv")) != len(MODE_ORDER):
+            raise AssertionError("配置级派生表行数不是 5。")
+        if not (results_dir / "REPORT.md").is_file():
+            raise AssertionError("缺少实验报告。")
+        for name in ("resource_distributions.png", "success_rate.png", "context_growth.png"):
+            if not (results_dir / "figures" / name).is_file():
+                raise AssertionError(f"缺少图表：{name}")
     secret_scan(ROOT)
     if check_git:
         branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
@@ -151,6 +170,7 @@ def validate(results_dir: Path, phase: str, repetitions: int, check_git: bool) -
         "tool_calls": len(tool_end),
         "run_files": len(run_files),
         "context_events": sum(event.get("event_type") == "context_built" and event.get("phase") == phase for event in events),
+        "derived_files_parsed": derived_files,
     }
 
 

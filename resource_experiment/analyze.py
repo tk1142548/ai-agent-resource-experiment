@@ -13,6 +13,10 @@ from scipy.stats import norm
 from .run import MODE_ORDER, ROOT, load_config
 
 
+plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+
+
 METRICS = [
     "prompt_tokens",
     "completion_tokens",
@@ -149,7 +153,10 @@ def plot_results(frame: pd.DataFrame, summary: pd.DataFrame, records: list[dict[
     fig, ax = plt.subplots(figsize=(9, 5))
     x = np.arange(len(order))
     rates = summary["success_rate"].to_numpy()
-    errors = np.vstack((rates - summary["success_rate_ci_low"], summary["success_rate_ci_high"] - rates))
+    errors = np.maximum(
+        0.0,
+        np.vstack((rates - summary["success_rate_ci_low"], summary["success_rate_ci_high"] - rates)),
+    )
     ax.bar(x, rates, yerr=errors, capsize=5)
     ax.set_xticks(x, labels, rotation=20)
     ax.set_ylim(0, 1.05)
@@ -183,13 +190,37 @@ def plot_results(frame: pd.DataFrame, summary: pd.DataFrame, records: list[dict[
     plt.close(fig)
 
 
-def report(summary: pd.DataFrame, results_dir: Path, config: dict[str, Any]) -> None:
+def report(
+    summary: pd.DataFrame,
+    differences: pd.DataFrame,
+    results_dir: Path,
+    config: dict[str, Any],
+) -> None:
     display = summary[[
         "mode", "n", "success_rate", "success_rate_ci_low", "success_rate_ci_high",
-        "local_context_total_mean", "task_wall_seconds_mean", "cost_cny_mean", "success_cost_cny",
+        "local_context_total_mean", "local_context_total_median", "local_context_total_p95",
+        "task_wall_seconds_mean", "task_wall_seconds_median", "task_wall_seconds_p95",
+        "cost_cny_mean", "cost_cny_median", "cost_cny_p95", "success_cost_cny",
     ]].copy()
     for column in display.columns[2:]:
         display[column] = display[column].map(lambda value: "—" if pd.isna(value) else f"{value:.6f}")
+    resource_display = summary[[
+        "mode", "cpu_seconds_mean", "rss_peak_bytes_mean", "gpu_running_seconds_mean",
+        "gpu_dedicated_peak_bytes_mean", "request_bytes_mean", "response_bytes_mean", "retry_count_mean",
+    ]].copy()
+    resource_display["rss_peak_mib_mean"] = resource_display.pop("rss_peak_bytes_mean") / 1024**2
+    resource_display["gpu_dedicated_peak_mib_mean"] = resource_display.pop("gpu_dedicated_peak_bytes_mean") / 1024**2
+    for column in resource_display.columns[1:]:
+        resource_display[column] = resource_display[column].map(lambda value: f"{value:.6f}")
+    delta_display = (
+        differences.groupby(["mode", "metric"], as_index=False)["delta_vs_full"]
+        .mean()
+        .pivot(index="mode", columns="metric", values="delta_vs_full")
+        .reset_index()
+    )
+    for column in delta_display.columns[1:]:
+        delta_display[column] = delta_display[column].map(lambda value: f"{value:.6f}")
+    total_cost = float((summary["cost_cny_mean"] * summary["n"]).sum())
     text = f"""# Kimi K3 智能体上下文资源消融实验报告
 
 ## 实验设置
@@ -205,7 +236,33 @@ def report(summary: pd.DataFrame, results_dir: Path, config: dict[str, Any]) -> 
 
 {display.to_markdown(index=False)}
 
-字段定义：`local_context_total_mean` 为各轮本地分词上下文之和；`success_cost_cny` 为该配置总费用除以成功次数。
+字段定义：`local_context_total` 为任务各轮本地分词上下文之和；`success_cost_cny` 为该配置总费用除以成功次数。正式实验服务商计费总额为 {total_cost:.6f} 元。
+
+## 相对完整配置的区组内差值
+
+{delta_display.to_markdown(index=False)}
+
+差值按同一拉丁方区组内的消融配置减去完整配置计算，再对 30 个区组取均值。
+
+## 本地与传输资源
+
+{resource_display.to_markdown(index=False)}
+
+## 可复算公式
+
+设服务商报告的缓存输入、非缓存输入和输出令牌量分别为 $N_c$、$N_u$、$N_o$，对应单价为 $P_c$、$P_u$、$P_o$，则单任务费用为：
+
+$$
+C = \frac{{N_cP_c + N_uP_u + N_oP_o}}{{10^6}}
+$$
+
+任务时延由模型调用、工具执行、验证和框架开销组成：
+
+$$
+T_{{task}} = T_{{model}} + T_{{tool}} + T_{{verify}} + T_{{framework}}
+$$
+
+每个任务文件均保存上述分量，验收程序从原始字段重新计算费用并检查时延闭合。
 
 ## 可复算产物
 
@@ -236,7 +293,7 @@ def main() -> None:
         table.to_csv(derived / f"{name}.csv", index=False, encoding="utf-8-sig")
         table.to_parquet(derived / f"{name}.parquet", index=False)
     plot_results(frame, summary, records, results_dir / "figures")
-    report(summary, results_dir, config)
+    report(summary, differences, results_dir, config)
     print(f"分析完成：{len(frame)} 个任务，{len(summary)} 个配置。")
 
 
