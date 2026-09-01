@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "kimi-k3-context-resource-ablation",
+  "run_id": "main-b21-p4-no_tool_calls",
+  "phase": "main",
+  "block": 21,
+  "position": 4,
+  "mode": "no_tool_calls",
+  "started_at": "2026-09-01T02:34:51.979282+00:00",
+  "ended_at": "2026-09-01T02:35:06.474234+00:00",
+  "task": "According to the company's quarterly revenue:\n- Q1: 2.5 million USD\n- Q2: 2.1 million EUR\n- Q3: 1.8 million GBP\n- Q4: 380 million JPY\n\nUse the available currency-conversion and calculation tools to convert every\nnon-USD quarter to USD, then calculate the annual total and quarterly average.\nReport both values rounded to two decimal places. Do not estimate exchange\nrates yourself; use the tool observations.",
+  "settings": {
+    "provider": "kimi",
+    "model": "kimi-k3",
+    "max_iterations": 5,
+    "hidden_result_style": "empty",
+    "serial_execution": true
+  },
+  "quality": {
+    "completed": false,
+    "task_success": false,
+    "groundedness": {
+      "observation_count": 0,
+      "answer_quantities": [],
+      "unsupported_quantities": [],
+      "verdict": "no_answer"
+    },
+    "outcome": "no_terminal_response",
+    "termination_reason": "error",
+    "context_contract": {
+      "has_provider_response_ids": false,
+      "turn_count": 1,
+      "request_roles": [
+        [
+          "system",
+          "user"
+        ]
+      ],
+      "tools_absent_every_turn": true,
+      "required_checks": [
+        "has_provider_response_ids",
+        "tools_absent_every_turn"
+      ],
+      "passed": false
+    },
+    "final_answer": null
+  },
+  "metrics": {
+    "prompt_tokens": 0,
+    "cached_prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "provider_total_tokens": 0,
+    "uncached_prompt_tokens": 0,
+    "local_context_tokens": {
+      "system": 147,
+      "tool_definitions": 1,
+      "user": 113,
+      "assistant": 1,
+      "tool_results": 1,
+      "local_total": 263
+    },
+    "local_provider_token_difference": -263,
+    "model_call_count": 0,
+    "model_wall_seconds": 0,
+    "first_token_seconds_mean": null,
+    "tool_wall_seconds": 0,
+    "repeated_tool_wall_seconds": 0,
+    "verification_wall_seconds": 0.0,
+    "framework_wall_seconds": 14.46899999998277,
+    "task_wall_seconds": 14.46899999998277,
+    "retry_count": 0,
+    "request_bytes": 0,
+    "response_bytes": 0,
+    "tool_action_count": 0,
+    "repeated_tool_action_count": 0,
+    "cost_cny": 0.0,
+    "success_cost_cny": null,
+    "cpu_seconds": 4.0625,
+    "rss_start_bytes": 51523584,
+    "rss_end_bytes": 52056064,
+    "rss_peak_bytes": 52080640,
+    "gpu_running_seconds": 0.0,
+    "gpu_dedicated_peak_bytes": 0
+  },
+  "model_calls": [],
+  "tool_calls": [],
+  "api_turns": [
+    {
+      "iteration": 1,
+      "provider": "kimi",
+      "resolved_model": "kimi-k3",
+      "base_url": "https://api.moonshot.cn/v1",
+      "using_openrouter": false,
+      "error": {
+        "class": "APIConnectionError",
+        "message": "Connection error."
+      },
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an intelligent assistant with access to tools. \n\nYour task is to solve the given problems using the available tools. Think step by step and use tools as needed.\n\nImportant: When you have gathered all necessary information and computed the final answer, clearly state \"FINAL ANSWER:\" followed by your answer."
+          },
+          {
+            "role": "user",
+            "content": "According to the company's quarterly revenue:\n- Q1: 2.5 million USD\n- Q2: 2.1 million EUR\n- Q3: 1.8 million GBP\n- Q4: 380 million JPY\n\nUse the available currency-conversion and calculation tools to convert every\nnon-USD quarter to USD, then calculate the annual total and quarterly average.\nReport both values rounded to two decimal places. Do not estimate exchange\nrates yourself; use the tool observations."
+          }
+        ],
+        "temperature": 1,
+        "max_tokens": 8192,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "context_tokens": {
+        "system": 147,
+        "tool_definitions": 1,
+        "user": 113,
+        "assistant": 1,
+        "tool_results": 1,
+        "local_total": 263
+      }
+    }
+  ],
+  "reasoning_steps": [],
+  "error": "APIConnectionError: Connection error."
+}

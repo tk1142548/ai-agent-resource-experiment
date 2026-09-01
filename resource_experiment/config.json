@@ -13,6 +13,7 @@
   "bootstrap_seed": 20260831,
   "bootstrap_resamples": 10000,
   "resource_sample_interval_seconds": 0.02,
+  "failed_task_backoff_seconds": [30, 60, 120, 240, 300],
   "price_cny_per_million_tokens": {
     "cached_input": 2.0,
     "uncached_input": 20.0,

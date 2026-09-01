@@ -236,8 +236,9 @@ def run_one(
         "error": arm["error"],
     }
     write_json(results_dir / "runs" / f"{run_id}.json", record)
+    valid_response = not arm["error"] and bool(agent.model_events)
     event_log.emit(
-        "task_end",
+        "task_end" if valid_response else "task_attempt_failed",
         **context,
         mode=mode.value,
         completed=arm["completed"],
@@ -245,6 +246,7 @@ def run_one(
         outcome=arm["outcome"],
         termination_reason=record["quality"]["termination_reason"],
         metrics=metrics,
+        error=arm["error"],
     )
     return record
 
@@ -281,13 +283,26 @@ def main() -> None:
         if run_id in completed:
             print(f"[{index}/{len(scheduled)}] resume skip {run_id}", flush=True)
             continue
-        print(f"[{index}/{len(scheduled)}] start {run_id}", flush=True)
-        record = run_one(config, event_log, token_counter, api_key, results_dir, args.phase, block, position, mode)
-        print(
-            f"[{index}/{len(scheduled)}] end {run_id} success={record['quality']['task_success']} "
-            f"wall={record['metrics']['task_wall_seconds']:.2f}s cost={record['metrics']['cost_cny']:.6f} CNY",
-            flush=True,
-        )
+        attempt = 0
+        while True:
+            print(f"[{index}/{len(scheduled)}] start {run_id} attempt={attempt + 1}", flush=True)
+            record = run_one(config, event_log, token_counter, api_key, results_dir, args.phase, block, position, mode)
+            valid_response = not record["error"] and bool(record["model_calls"])
+            if valid_response:
+                print(
+                    f"[{index}/{len(scheduled)}] end {run_id} success={record['quality']['task_success']} "
+                    f"wall={record['metrics']['task_wall_seconds']:.2f}s cost={record['metrics']['cost_cny']:.6f} CNY",
+                    flush=True,
+                )
+                break
+            backoffs = config["failed_task_backoff_seconds"]
+            delay = int(backoffs[min(attempt, len(backoffs) - 1)])
+            print(
+                f"[{index}/{len(scheduled)}] retry {run_id} after={delay}s error={record['error']}",
+                flush=True,
+            )
+            attempt += 1
+            time.sleep(delay)
     event_log.emit("experiment_end", phase=args.phase, repetitions=repetitions)
 
 

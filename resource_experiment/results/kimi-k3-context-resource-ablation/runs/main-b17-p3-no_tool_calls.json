@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "kimi-k3-context-resource-ablation",
+  "run_id": "main-b17-p3-no_tool_calls",
+  "phase": "main",
+  "block": 17,
+  "position": 3,
+  "mode": "no_tool_calls",
+  "started_at": "2026-08-31T17:22:56.337429+00:00",
+  "ended_at": "2026-08-31T17:23:03.871245+00:00",
+  "task": "According to the company's quarterly revenue:\n- Q1: 2.5 million USD\n- Q2: 2.1 million EUR\n- Q3: 1.8 million GBP\n- Q4: 380 million JPY\n\nUse the available currency-conversion and calculation tools to convert every\nnon-USD quarter to USD, then calculate the annual total and quarterly average.\nReport both values rounded to two decimal places. Do not estimate exchange\nrates yourself; use the tool observations.",
+  "settings": {
+    "provider": "kimi",
+    "model": "kimi-k3",
+    "max_iterations": 5,
+    "hidden_result_style": "empty",
+    "serial_execution": true
+  },
+  "quality": {
+    "completed": true,
+    "task_success": false,
+    "groundedness": {
+      "observation_count": 0,
+      "answer_quantities": [],
+      "unsupported_quantities": [],
+      "verdict": "no_quantities"
+    },
+    "outcome": "no_unsupported_numbers",
+    "termination_reason": "terminal_response",
+    "context_contract": {
+      "has_provider_response_ids": true,
+      "turn_count": 1,
+      "request_roles": [
+        [
+          "system",
+          "user"
+        ]
+      ],
+      "tools_absent_every_turn": true,
+      "required_checks": [
+        "has_provider_response_ids",
+        "tools_absent_every_turn"
+      ],
+      "passed": true
+    },
+    "final_answer": "I'll convert each non-USD quarter to USD first. Since these conversions are independent, I'll make all three calls at once."
+  },
+  "metrics": {
+    "prompt_tokens": 260,
+    "cached_prompt_tokens": 256,
+    "completion_tokens": 211,
+    "reasoning_tokens": 171,
+    "provider_total_tokens": 471,
+    "uncached_prompt_tokens": 4,
+    "local_context_tokens": {
+      "system": 147,
+      "tool_definitions": 1,
+      "user": 113,
+      "assistant": 1,
+      "tool_results": 1,
+      "local_total": 263
+    },
+    "local_provider_token_difference": -3,
+    "model_call_count": 1,
+    "model_wall_seconds": 7.5,
+    "first_token_seconds_mean": 1.985,
+    "tool_wall_seconds": 0,
+    "repeated_tool_wall_seconds": 0,
+    "verification_wall_seconds": 0.0,
+    "framework_wall_seconds": 0.031000000017229468,
+    "task_wall_seconds": 7.5310000000172295,
+    "retry_count": 0,
+    "request_bytes": 918,
+    "response_bytes": 71863,
+    "tool_action_count": 0,
+    "repeated_tool_action_count": 0,
+    "cost_cny": 0.021692,
+    "success_cost_cny": null,
+    "cpu_seconds": 2.078125,
+    "rss_start_bytes": 215633920,
+    "rss_end_bytes": 215633920,
+    "rss_peak_bytes": 215658496,
+    "gpu_running_seconds": 0.0,
+    "gpu_dedicated_peak_bytes": 0
+  },
+  "model_calls": [
+    {
+      "call_id": "77023a8e69d8469b9cf855c859cfaa40",
+      "iteration": 1,
+      "wall_seconds": 7.5,
+      "time_to_first_token_seconds": 1.985,
+      "request_bytes": 918,
+      "response_bytes": 71863,
+      "chunk_count": 199,
+      "retry_count": 0,
+      "transport_attempts": [
+        {
+          "attempt": 0,
+          "start_ns": 267247515000000,
+          "method": "POST",
+          "url": "https://api.moonshot.cn/v1/chat/completions",
+          "request_body_bytes": 950,
+          "status_code": 200,
+          "headers_ns": 267249500000000,
+          "wait_seconds_since_previous_headers": null
+        }
+      ],
+      "usage": {
+        "completion_tokens": 211,
+        "prompt_tokens": 260,
+        "total_tokens": 471,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 171,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 256
+        },
+        "cached_tokens": 256
+      }
+    }
+  ],
+  "tool_calls": [],
+  "api_turns": [
+    {
+      "iteration": 1,
+      "provider": "kimi",
+      "resolved_model": "kimi-k3",
+      "base_url": "https://api.moonshot.cn/v1",
+      "using_openrouter": false,
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an intelligent assistant with access to tools. \n\nYour task is to solve the given problems using the available tools. Think step by step and use tools as needed.\n\nImportant: When you have gathered all necessary information and computed the final answer, clearly state \"FINAL ANSWER:\" followed by your answer."
+          },
+          {
+            "role": "user",
+            "content": "According to the company's quarterly revenue:\n- Q1: 2.5 million USD\n- Q2: 2.1 million EUR\n- Q3: 1.8 million GBP\n- Q4: 380 million JPY\n\nUse the available currency-conversion and calculation tools to convert every\nnon-USD quarter to USD, then calculate the annual total and quarterly average.\nReport both values rounded to two decimal places. Do not estimate exchange\nrates yourself; use the tool observations."
+          }
+        ],
+        "temperature": 1,
+        "max_tokens": 8192,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a95b87107b7016609d39210",
+        "object": "chat.completion",
+        "created": 1788196978,
+        "model": "kimi-k3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I'll convert each non-USD quarter to USD first. Since these conversions are independent, I'll make all three calls at once.",
+              "reasoning_content": "The user wants me to convert non-USD quarterly revenues to USD using currency conversion tools, then calculate annual total and quarterly average.\n\nAvailable tools:\n- convert_currency(amount, from_currency, to_currency)\n- calculate(expression)\n\nSteps:\n1. Q1 is already USD: 2.5 million USD = 2,500,000 USD\n2. Q2: 2.1 million EUR = 2,100,000 EUR → convert to USD\n3. Q3: 1.8 million GBP = 1,800,000 GBP → convert to USD\n4. Q4: 380 million JPY = 380,000,000 JPY → convert to USD\n\nI can do the three conversions in parallel since they're independent. Then calculate the total and average.\n\nLet me make the three conversion calls in parallel."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "completion_tokens": 211,
+          "prompt_tokens": 260,
+          "total_tokens": 471,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 171,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      },
+      "context_tokens": {
+        "system": 147,
+        "tool_definitions": 1,
+        "user": 113,
+        "assistant": 1,
+        "tool_results": 1,
+        "local_total": 263
+      }
+    }
+  ],
+  "reasoning_steps": [
+    "The user wants me to convert non-USD quarterly revenues to USD using currency conversion tools, then calculate annual total and quarterly average.\n\nAvailable tools:\n- convert_currency(amount, from_currency, to_currency)\n- calculate(expression)\n\nSteps:\n1. Q1 is already USD: 2.5 million USD = 2,500,000 USD\n2. Q2: 2.1 million EUR = 2,100,000 EUR → convert to USD\n3. Q3: 1.8 million GBP = 1,800,000 GBP → convert to USD\n4. Q4: 380 million JPY = 380,000,000 JPY → convert to USD\n\nI can do the three conversions in parallel since they're independent. Then calculate the total and average.\n\nLet me make the three conversion calls in parallel."
+  ],
+  "error": null
+}
